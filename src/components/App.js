@@ -11,9 +11,7 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 import { useAuth0 } from "./Auth/react-auth0-spa";
 
 const createApolloClient = (authToken) => {
-  console.log(authToken);
   const { user, isAuthenticated, isLoading } = useAuth0();
-  console.log(user.sub);
   return new ApolloClient({
     link: new HttpLink({
       uri: 'https://innocent-drum-67.hasura.app/v1/graphql',

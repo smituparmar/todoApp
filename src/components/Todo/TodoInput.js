@@ -4,8 +4,8 @@ import { GET_MY_TODOS } from "./TodoPrivateList";
 import { useAuth0 } from "../Auth/react-auth0-spa";
 
 const ADD_TODO = gql`
-  mutation($todo: String!, $isPublic: Boolean!, $user_id: String!) {
-    insert_todos(objects: { title: $todo, is_public: $isPublic, user_id: $user_id }) {
+  mutation($todo: String!, $isPublic: Boolean!) {
+    insert_todos(objects: { title: $todo, is_public: $isPublic }) {
       affected_rows
       returning {
         id
@@ -18,7 +18,7 @@ const ADD_TODO = gql`
 `;
 
 const TodoInput = ({ isPublic = false }) => {
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { user } = useAuth0();
   const [todoInput, setTodoInput] = useState("");
   
 
@@ -29,18 +29,12 @@ const TodoInput = ({ isPublic = false }) => {
     }
     // Fetch the todos from the cache
     const existingTodos = cache.readQuery({
-      query: GET_MY_TODOS,
-      variables:{
-        user_id:user.sub
-      }
+      query: GET_MY_TODOS
       });
     // Add the new todo to the cache
     const newTodo = data.insert_todos.returning[0];
     cache.writeQuery({
       query: GET_MY_TODOS,
-      variables:{
-        user_id:user.sub
-      },
       data: {todos: [newTodo, ...existingTodos.todos]}
     });
   };
@@ -60,7 +54,7 @@ const TodoInput = ({ isPublic = false }) => {
       className="formInput"
       onSubmit={e => {
         e.preventDefault();
-        addTodo({ variables: { todo: todoInput, isPublic,user_id:user.sub} });
+        addTodo({ variables: { todo: todoInput, isPublic} });
       }}
     >
       <input

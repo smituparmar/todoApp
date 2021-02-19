@@ -6,7 +6,7 @@ import TodoFilters from "./TodoFilters";
 import { useAuth0 } from "../Auth/react-auth0-spa";
 
 const GET_MY_TODOS = gql`
-query getMyTodos($user_id: String!) {
+query getMyTodos{
   todos(where: {is_public: {_eq: false}}, order_by: {created_at: desc}) {
     id
     title
@@ -87,10 +87,7 @@ const TodoPrivateList = props => {
 
 const TodoPrivateListQuery = () => {
   const { user, isAuthenticated, isLoading } = useAuth0();
-  console.log(user.sub)
-  const { loading, error, data } = useQuery(GET_MY_TODOS,{variables:{
-    user_id:user.sub
-  }});
+  const { loading, error, data } = useQuery(GET_MY_TODOS);
 
   if (loading) {
     return <div>Loading...</div>;

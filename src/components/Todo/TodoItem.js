@@ -23,17 +23,11 @@ const TodoItem = ({ index, todo }) => {
       update: cache => {
         
         const existingTodos = cache.readQuery({ 
-          query: GET_MY_TODOS ,
-          variables:{
-            user_id:user.sub
-          }
+          query: GET_MY_TODOS 
         });
         const newTodos = existingTodos.todos.filter(t => t.id !== todo.id);
         cache.writeQuery({
           query: GET_MY_TODOS,
-          variables:{
-            user_id:user.sub
-          },
           data: { todos: newTodos }
         });
       }
@@ -59,10 +53,7 @@ const TodoItem = ({ index, todo }) => {
       optimisticResponse: true,
       update: cache => {
         
-        const existingTodos = cache.readQuery({ query: GET_MY_TODOS ,
-          variables:{
-          user_id:user.sub
-        }
+        const existingTodos = cache.readQuery({ query: GET_MY_TODOS 
       });
         const newTodos = existingTodos.todos.map(t => {
           if (t.id === todo.id) {
@@ -73,9 +64,6 @@ const TodoItem = ({ index, todo }) => {
         });
         cache.writeQuery({
           query: GET_MY_TODOS,
-          variables:{
-            user_id:user.sub
-          },
           data: { todos: newTodos }
         });
       }
