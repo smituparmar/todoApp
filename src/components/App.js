@@ -11,12 +11,17 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 import { useAuth0 } from "./Auth/react-auth0-spa";
 
 const createApolloClient = (authToken) => {
+  console.log(authToken);
+  const { user, isAuthenticated, isLoading } = useAuth0();
+  console.log(user.sub);
   return new ApolloClient({
     link: new HttpLink({
       uri: 'https://innocent-drum-67.hasura.app/v1/graphql',
       headers: {
-        Authorization: `Bearer ${authToken}`,
-        'x-hasura-admin-secret':'y6kBpvBl0KFWqhsV9YcZNPpow2ASL5QESUPZCOb2afFZGvehnR4F1MuVGnbLL0v2'
+        'Authorization': `Bearer ${authToken}`,
+        'X-Hasura-User-Id':user.sub,
+        'X-Hasura-Role':'user',
+        'x-hasura-access-key':'y6kBpvBl0KFWqhsV9YcZNPpow2ASL5QESUPZCOb2afFZGvehnR4F1MuVGnbLL0v2 '
       }
     }),
     cache: new InMemoryCache(),

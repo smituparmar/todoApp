@@ -3,19 +3,17 @@ import { useQuery, useMutation, gql } from "@apollo/client";
 
 import TodoItem from "./TodoItem";
 import TodoFilters from "./TodoFilters";
+import { useAuth0 } from "../Auth/react-auth0-spa";
 
 const GET_MY_TODOS = gql`
-  query getMyTodos {
-    todos(
-      where: { is_public: { _eq: false } }
-      order_by: { created_at: desc }
-    ) {
-      id
-      title
-      created_at
-      is_completed
-    }
+query getMyTodos($user_id: String!) {
+  todos(where: {is_public: {_eq: false}}, order_by: {created_at: desc}) {
+    id
+    title
+    created_at
+    is_completed
   }
+}
 `;
 
 // Remove all the todos that are completed
@@ -30,6 +28,7 @@ const CLEAR_COMPLETED = gql`
 `;
 
 const TodoPrivateList = props => {
+  
   const [state, setState] = useState({
     filter: "all",
     clearInProgress: false
@@ -87,7 +86,11 @@ const TodoPrivateList = props => {
 };
 
 const TodoPrivateListQuery = () => {
-  const { loading, error, data } = useQuery(GET_MY_TODOS);
+  const { user, isAuthenticated, isLoading } = useAuth0();
+  console.log(user.sub)
+  const { loading, error, data } = useQuery(GET_MY_TODOS,{variables:{
+    user_id:user.sub
+  }});
 
   if (loading) {
     return <div>Loading...</div>;

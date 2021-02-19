@@ -1,6 +1,7 @@
 import React from "react";
 import { useMutation, gql } from "@apollo/client";
 import { GET_MY_TODOS } from "./TodoPrivateList";
+import { useAuth0 } from "../Auth/react-auth0-spa";
 
 const TodoItem = ({ index, todo }) => {
   const REMOVE_TODO = gql`
@@ -20,10 +21,19 @@ const TodoItem = ({ index, todo }) => {
       variables: { id: todo.id },
       optimisticResponse: true,
       update: cache => {
-        const existingTodos = cache.readQuery({ query: GET_MY_TODOS });
+        
+        const existingTodos = cache.readQuery({ 
+          query: GET_MY_TODOS ,
+          variables:{
+            user_id:user.sub
+          }
+        });
         const newTodos = existingTodos.todos.filter(t => t.id !== todo.id);
         cache.writeQuery({
           query: GET_MY_TODOS,
+          variables:{
+            user_id:user.sub
+          },
           data: { todos: newTodos }
         });
       }
@@ -42,13 +52,18 @@ const TodoItem = ({ index, todo }) => {
   `;
 
   const [toggleTodoMutation] = useMutation(TOGGLE_TODO);
-
+  const { user, isAuthenticated, isLoading } = useAuth0();
   const toggleTodo = () => {
     toggleTodoMutation({
       variables: { id: todo.id, isCompleted: !todo.is_completed },
       optimisticResponse: true,
       update: cache => {
-        const existingTodos = cache.readQuery({ query: GET_MY_TODOS });
+        
+        const existingTodos = cache.readQuery({ query: GET_MY_TODOS ,
+          variables:{
+          user_id:user.sub
+        }
+      });
         const newTodos = existingTodos.todos.map(t => {
           if (t.id === todo.id) {
             return { ...t, is_completed: !t.is_completed };
@@ -58,6 +73,9 @@ const TodoItem = ({ index, todo }) => {
         });
         cache.writeQuery({
           query: GET_MY_TODOS,
+          variables:{
+            user_id:user.sub
+          },
           data: { todos: newTodos }
         });
       }

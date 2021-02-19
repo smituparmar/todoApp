@@ -4,7 +4,7 @@ import LogoutBtn from "./Auth/LogoutBtn";
 
 const Header = ({ logoutHandler }) => (
   <Navbar className="justify-content-between">
-    <Navbar.Brand>GraphQL Tutorial App</Navbar.Brand>
+    <Navbar.Brand>Sign in Sign up page</Navbar.Brand>
     <Navbar.Collapse className="justify-content-end">
       <LogoutBtn logoutHandler={logoutHandler} />
     </Navbar.Collapse>
